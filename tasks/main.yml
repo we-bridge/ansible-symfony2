@@ -37,13 +37,14 @@
   file: state=link src={{symfony2_project_root}}/shared/app/config path={{symfony2_project_root}}/releases/{{symfony2_project_release}}/{{symfony2_project_relative_root}}/app/config
   when: config_dir.stat.exists == false
 
-- name: Check if shared/app/config/parameters.ini exists.
-  stat: path={{symfony2_project_root}}/shared/app/config/parameters.ini
-  register: parameters_ini
+- name: Find shared app/config/* files.
+  shell: find {{symfony2_project_root}}/shared/app/config/ | tail -n+2
+  register: shared_config_files
 
-- name: Create symlink for app/config/parameters.ini from shared directory.
-  shell: ln -s {{symfony2_project_root}}/shared/app/config/parameters.ini {{symfony2_project_root}}/releases/{{symfony2_project_release}}/{{symfony2_project_relative_root}}/app/config/parameters.ini creates={{symfony2_project_root}}/releases/{{symfony2_project_release}}/{{symfony2_project_relative_root}}/app/config/parameters.ini
-  when: parameters_ini.stat.exists
+- name: Link shared app/config/ files.
+  shell: ln -sf {{item}} {{symfony2_project_root}}/releases/{{symfony2_project_release}}/{{symfony2_project_relative_root}}/app/config/parameters.ini creates={{symfony2_project_root}}/releases/{{symfony2_project_release}}/{{symfony2_project_relative_root}}/app/config/
+  with_items: shared_config_files.stdout_lines
+  when: config_dir.stat.exists
 
 - name: Check if composer exists.
   stat: path={{symfony2_project_composer_path}}/composer.phar
