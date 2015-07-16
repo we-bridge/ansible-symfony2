@@ -42,7 +42,7 @@
   register: shared_config_files
 
 - name: Link shared app/config/ files.
-  shell: ln -sf {{item}} {{symfony2_project_root}}/releases/{{symfony2_project_release}}/{{symfony2_project_relative_root}}/app/config/parameters.ini creates={{symfony2_project_root}}/releases/{{symfony2_project_release}}/{{symfony2_project_relative_root}}/app/config/
+  shell: ln -sf {{item}} {{symfony2_project_root}}/releases/{{symfony2_project_release}}/{{symfony2_project_relative_root}}/app/config/
   with_items: shared_config_files.stdout_lines
   when: config_dir.stat.exists
 
